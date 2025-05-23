@@ -13,11 +13,11 @@
 [![Discord Server](https://img.shields.io/discord/1116803230643527710?logo=discord&style=social&label=Join)](https://discord.gg/EqksyE2EX9)
 
 
-[Langflow](https://langflow.org) is a powerful tool for building and deploying AI-powered agents and workflows. It provides developers with both a visual authoring experience and a built-in API server that turns every agent into an API endpoint that can be integrated into applications built on any framework or stack. Langflow comes with batteries included and supports all major LLMs, vector databases and a growing library of AI tools.
+[Langflow](https://langflow.org) is a powerful tool for building and deploying AI-powered agents and workflows. It provides developers with both a visual authoring experience and a built-in API server that turns every agent into an API endpoint that can be integrated into applications built on any framework or stack. Langflow comes with batteries included and supports all major LLMs, vector databases and a growing library of AI tools. This repo is customized by Arno.
 
 ## ✨ Highlight features
 
-1. **Visual Builder** to get started quickly and iterate. 
+1. **Visual Builder** to get started quickly and iterate.
 1. **Access to Code** so developers can tweak any component using Python.
 1. **Playground** to immediately test and iterate on their flows with step-by-step control.
 1. **Multi-agent** orchestration and conversation management and retrieval.
@@ -29,7 +29,7 @@
 
 Langflow works with Python 3.10 to 3.13.
 
-Install with uv **(recommended)** 
+Install with uv **(recommended)**
 
 ```shell
 uv pip install langflow

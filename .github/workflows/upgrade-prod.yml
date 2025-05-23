@@ -1,0 +1,71 @@
+name: Upgrade Prod
+
+concurrency: prod_deployments
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Version Number (v0.0.X|latest)"
+        required: true
+        default: "latest"
+
+jobs:
+  deploy:
+    runs-on: "ubuntu-latest"
+
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./duolingo
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+
+      - name: Get the latest release
+        uses: rez0n/actions-github-release@v2.0
+        id: latest_release
+        env:
+          token: ${{ secrets.GH_PAT }}
+          repository: "Kametora/arno"
+          type: "latest"
+
+      - name: Set the tag version env
+        run: echo "VERSION=$(if [[ ${{ github.event.inputs.tag }} == 'latest' ]]; then echo ${{ steps.latest_release.outputs.release }}; else echo ${{ github.event.inputs.tag }}; fi)" >> $GITHUB_ENV
+
+      - name: Configure Google Service Account
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GACTION_GOOGLE_CREDENTIALS }}
+          project_id: ${{ secrets.GOOGLE_PROJECT_ID }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          project_id: ${{ secrets.GOOGLE_PROJECT_ID }}
+
+      # Configure docker to use the gcloud command-line tool as a credential helper
+      - name: Configure Docker credentials
+        run: |
+          gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://gcr.io
+          gcloud components install gke-gcloud-auth-plugin
+
+      - name: Install Helm
+        run: |
+          curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+
+      # Deploy the Docker image to the GKE cluster
+      - name: Deploy Langflow IDE to Prod
+        run: |
+          gcloud container clusters get-credentials arno-duolingo-prod \
+            --zone asia-south1 \
+            --project ${{ secrets.GOOGLE_PROJECT_ID }}
+          helm upgrade -i langflow-ide ../infra/kubernetes/langflow-ide \
+            -f ../infra/kubernetes/langflow-ide/values.yaml \
+            --set langflow.backend.image.tag=${{ env.VERSION }} \
+            --set langflow.frontend.image.tag=${{ env.VERSION }} \
+            --set langflow.backend.externalDatabase.password=${{ secrets.DB_PASSWORD }} \
+            --set langflow.backend.env[4].name=LANGFLOW_DATABASE_URL \
+            --set-string langflow.backend.env[4].value="postgresql://postgres.pvjjdzqhllahjzgrshpw:${{ secrets.DB_PASSWORD }}@aws-0-us-west-1.pooler.supabase.com:5432/postgres"
