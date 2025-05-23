@@ -1,5 +1,5 @@
 name: Docker Build and Push
-run-name: Docker Build and Push by @${{ github.actor }}
+run-name: Docker Build and Push
 
 on:
   workflow_call:

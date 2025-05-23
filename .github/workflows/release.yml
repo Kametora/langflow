@@ -1,5 +1,5 @@
-name: Langflow Docker Release
-run-name: Langflow Docker Release by @${{ github.actor }}
+name: Release
+run-name: Release
 
 on:
   push:
@@ -19,3 +19,4 @@ jobs:
     name: Call Docker Build Workflow for Langflow
     #needs: [ci]
     uses: ./.github/workflows/docker-build.yml
+    secrets: inherit
