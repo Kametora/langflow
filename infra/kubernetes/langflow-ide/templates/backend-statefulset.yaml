@@ -87,11 +87,11 @@ spec:
             httpGet:
               path: /health
               port: http
-              
+
             initialDelaySeconds: {{ .Values.langflow.backend.probe.initialDelaySeconds }}
             periodSeconds: {{ .Values.langflow.backend.probe.periodSeconds }}
             timeoutSeconds: {{ .Values.langflow.backend.probe.timeoutSeconds }}
-            failureThreshold: {{ .Values.langflow.backend.probe.failureThreshold }}   
+            failureThreshold: {{ .Values.langflow.backend.probe.failureThreshold }}
           readinessProbe:
             httpGet:
               path: /health
@@ -99,7 +99,7 @@ spec:
             initialDelaySeconds: {{ .Values.langflow.backend.probe.initialDelaySeconds }}
             periodSeconds: {{ .Values.langflow.backend.probe.periodSeconds }}
             timeoutSeconds: {{ .Values.langflow.backend.probe.timeoutSeconds }}
-            failureThreshold: {{ .Values.langflow.backend.probe.failureThreshold }}   
+            failureThreshold: {{ .Values.langflow.backend.probe.failureThreshold }}
           env:
             - name: LANGFLOW_BACKEND_ONLY
               value: "{{ .Values.langflow.backend.backendOnly }}"
@@ -114,17 +114,17 @@ spec:
             {{- end }}
             {{- if .Values.langflow.backend.externalDatabase.enabled }}
             - name: LF_CHART_EXTERNALDB_DRIVER
-            {{- toYaml .Values.langflow.backend.externalDatabase.driver | nindent 14 }}
+              value: {{ .Values.langflow.backend.externalDatabase.driver | quote }}
             - name: LF_CHART_EXTERNALDB_HOST
-            {{- toYaml .Values.langflow.backend.externalDatabase.host | nindent 14 }}
+              value: {{ .Values.langflow.backend.externalDatabase.host | quote }}
             - name: LF_CHART_EXTERNALDB_PORT
-            {{- toYaml .Values.langflow.backend.externalDatabase.port | nindent 14 }}
+              value: {{ .Values.langflow.backend.externalDatabase.port | quote }}
             - name: LF_CHART_EXTERNALDB_DATABASE
-            {{- toYaml .Values.langflow.backend.externalDatabase.database | nindent 14 }}
+              value: {{ .Values.langflow.backend.externalDatabase.database | quote }}
             - name: LF_CHART_EXTERNALDB_USER
-            {{- toYaml .Values.langflow.backend.externalDatabase.user | nindent 14 }}
+              value: {{ .Values.langflow.backend.externalDatabase.user | quote }}
             - name: LF_CHART_EXTERNALDB_PASSWORD
-            {{- toYaml .Values.langflow.backend.externalDatabase.password | nindent 14 }}
+              value: {{ .Values.langflow.backend.externalDatabase.password | quote }}
             {{- end }}
             {{- if and (hasKey .Values.langflow.backend "autoLogin") (eq .Values.langflow.backend.autoLogin false) }}
             - name: LANGFLOW_AUTO_LOGIN
@@ -169,5 +169,5 @@ spec:
       {{- else }}
       storageClassName: "{{ template "langflow.fullname" . }}-sqlite"
       {{- end }}
-      
+
   {{- end }}
