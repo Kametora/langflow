@@ -13,14 +13,6 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Debug Token
-        run: |
-          if [ -n "${{ secrets.GH_PAT }}" ]; then
-            echo "Token is set."
-          else
-            echo "Token is not set."
-          fi
-
       - name: Bump version and push tag
         id: tag_version
         uses: mathieudutour/github-tag-action@v5.5
@@ -45,18 +37,6 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-          cache: 'pip'
-
-      - name: Cache Python dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cache/pip
-            **/__pycache__
-            **/*.pyc
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
