@@ -28,7 +28,7 @@ jobs:
         id: latest_release
         env:
           token: ${{ secrets.GH_PAT }}
-          repository: "Kametora/arno"
+          repository: "Kametora/langflow"
           type: "latest"
 
       - name: Set the tag version env
@@ -61,7 +61,7 @@ jobs:
           gcloud container clusters get-credentials arno-duolingo-prod \
             --zone asia-south1 \
             --project ${{ secrets.GOOGLE_PROJECT_ID }}
-          helm upgrade -i langflow-ide ./infra/kubernetes/langflow-ide \
+          helm upgrade -i langflow-ide -n langflow ./infra/kubernetes/langflow-ide \
             -f ./infra/kubernetes/langflow-ide/values.yaml \
             --set langflow.backend.image.tag=${{ env.VERSION }} \
             --set langflow.frontend.image.tag=${{ env.VERSION }} \
